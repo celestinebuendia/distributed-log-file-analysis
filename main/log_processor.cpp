@@ -72,7 +72,8 @@ void process_log_line(
     LogMins& local_mins,
     LogMaxs& local_maxs,
     std::unordered_map<std::string, int>& local_endpoint_counts,
-    std::unordered_map<std::string, int>& local_ip_counts
+    std::unordered_map<std::string, int>& local_ip_counts,
+    std::unordered_map<std::string, int>& local_referrer_counts
 ) {
     if (line.empty()) return;
 
@@ -169,10 +170,13 @@ void process_log_line(
         return;
     }
 
-    // Parse referrer (currently not handled)
+    // Parse referrer
     std::string referrer;
     std::getline(iss, referrer, '"');
     std::getline(iss, referrer, '"');
+    if (!referrer.empty() && referrer != "-") {
+        local_referer_counts[referrer]++;
+    }
 
     // Parse user agent (currently not handled)
     std::string user_agent;
@@ -352,9 +356,7 @@ int main(int argc, char* argv[]) {
     LogMaxs local_maxs = {};
     std::unordered_map<std::string, int> local_endpoint_counts = {};
     std::unordered_map<std::string, int> local_ip_counts = {};
-    // TODO: std::unordered_map<std::string, int> local_day_counts;
-    // TODO: std::unordered_map<std::string, int> local_day_ip_counts;
-    // TODO: std::unordered_map<std::string, int> local_referer_counts;
+    std::unordered_map<std::string, int> local_referrer_counts = {};
 
     // Initialize global statistics variables for reduction
     LogSums global_sums = {};
@@ -371,7 +373,8 @@ int main(int argc, char* argv[]) {
             local_mins,
             local_maxs,
             local_endpoint_counts,
-            local_ip_counts
+            local_ip_counts,
+            local_referrer_counts
         );
     }
 
@@ -397,24 +400,30 @@ int main(int argc, char* argv[]) {
     // Serialize maps and send to rank 0
     std::string serialized_endpoints = serialize_map(local_endpoint_counts);
     std::string serialized_ips = serialize_map(local_ip_counts);
+    std::string serialized_referrers = serialize_map(local_referrer_counts);
 
     // Get serialized map sizes
     int local_endpoints_size = serialized_endpoints.size();
     int local_ips_size = serialized_ips.size();
+    int local_referrers_size = serialized_referrers.size();
 
     // Global arrays to hold sizes for gathering at rank 0
     std::vector<int> all_endpoint_sizes(rank == 0 ? size : 0);
     std::vector<int> all_ip_sizes(rank == 0 ? size : 0);
+    std::vector<int> all_referrer_sizes(rank == 0 ? size : 0);
 
     // Gather sizes at rank 0
     MPI_Gather(&local_endpoints_size, 1, MPI_INT, all_endpoint_sizes.data(), 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Gather(&local_ips_size, 1, MPI_INT, all_ip_sizes.data(), 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gather(&local_referrers_size, 1, MPI_INT, all_referrer_sizes.data(), 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     // At rank 0, calculate displacements and total size for receiving serialized maps
     std::vector<int> endpoint_displs(rank == 0 ? size : 0);
     std::vector<int> ip_displs(rank == 0 ? size : 0);
+    std::vector<int> referrer_displs(rank == 0 ? size : 0);
     int total_endpoint_size = 0;
     int total_ip_size = 0;
+    int total_referrer_size = 0;
     if (rank == 0) {
         for (int i = 0; i < size; i++) {
             endpoint_displs[i] = total_endpoint_size;
@@ -422,14 +431,19 @@ int main(int argc, char* argv[]) {
 
             ip_displs[i] = total_ip_size;
             total_ip_size += all_ip_sizes[i];
+
+            referrer_displs[i] = total_referrer_size;
+            total_referrer_size += all_referrer_sizes[i];
         }
     }
 
     // Get all serialized maps at rank 0 as whole strings
     std::vector<char> all_serialized_endpoints(rank == 0 ? total_endpoint_size : 0);
     std::vector<char> all_serialized_ips(rank == 0 ? total_ip_size : 0);
+    std::vector<char> all_serialized_referrers(rank == 0 ? total_referrer_size : 0);
     MPI_Gatherv(serialized_endpoints.data(), local_endpoints_size, MPI_CHAR, all_serialized_endpoints.data(), all_endpoint_sizes.data(), endpoint_displs.data(), MPI_CHAR, 0, MPI_COMM_WORLD);
     MPI_Gatherv(serialized_ips.data(), local_ips_size, MPI_CHAR, all_serialized_ips.data(), all_ip_sizes.data(), ip_displs.data(), MPI_CHAR, 0, MPI_COMM_WORLD);
+    MPI_Gatherv(serialized_referrers.data(), local_referrers_size, MPI_CHAR, all_serialized_referrers.data(), all_referrer_sizes.data(), referrer_displs.data(), MPI_CHAR, 0, MPI_COMM_WORLD);
 
     double communication_time_end = MPI_Wtime();
     double time_communication = communication_time_end - communication_time_start;
@@ -477,6 +491,8 @@ int main(int argc, char* argv[]) {
         print_map_top_n(global_endpoint_counts, 5);
         std::cout << "Top 5 IPs:" << std::endl;
         print_map_top_n(global_ip_counts, 5);
+        std::cout << "Top 5 Referers:" << std::endl;
+        print_map_top_n(global_referrer_counts, 5);
 
         // Get top 5 status codes
         std::vector<std::pair<int,long>> status_counts = {
@@ -518,8 +534,6 @@ int main(int argc, char* argv[]) {
             std::cout << "  " << method_counts[i].first << ": " << method_counts[i].second << std::endl;
         }
 
-        // TODO: Print top 5 referers
-
         // Averages
         std::cout << "\n--- Averages ---" << std::endl;
         if (global_sums.total_recorded_response_times > 0) {
@@ -529,8 +543,8 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "Bytes / Request: " << (double)global_sums.total_bytes_sent / global_sums.total_requests << std::endl;
         std::cout << "Requests / Day: " << global_sums.total_requests / days << std::endl;
-        // TODO: Average IPs / Day
-        // TODO: Average Requests / IP
+        std::cout << "Unique IPs / Day: " << global_ip_counts.size() / days << std::endl;
+        std::cout << "Requests / IP: " << global_sums.total_requests / global_ip_counts.size() << std::endl;
 
         // Request percentages
         std::cout << "\n--- Request Percentages ---" << std::endl;
