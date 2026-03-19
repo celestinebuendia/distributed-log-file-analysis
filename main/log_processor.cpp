@@ -5,6 +5,10 @@
 #include <string>
 #include <sstream>
 #include <unordered_map>
+#include <ctime>
+#include <algorithm>
+#include <climits>
+#include <format>
 
 /**
  * Struct to hold log file statistics sums for reduction.
@@ -175,7 +179,7 @@ void process_log_line(
     std::getline(iss, referrer, '"');
     std::getline(iss, referrer, '"');
     if (!referrer.empty() && referrer != "-") {
-        local_referer_counts[referrer]++;
+        local_referrer_counts[referrer]++;
     }
 
     // Parse user agent (currently not handled)
@@ -460,6 +464,7 @@ int main(int argc, char* argv[]) {
         // Deserialize maps back into global maps
         std::unordered_map<std::string, int> global_endpoint_counts = deserialize_map(std::string(all_serialized_endpoints.data(), total_endpoint_size));
         std::unordered_map<std::string, int> global_ip_counts = deserialize_map(std::string(all_serialized_ips.data(), total_ip_size));
+        std::unordered_map<std::string, int> global_referrer_counts = deserialize_map(std::string(all_serialized_referrers.data(), total_referrer_size));
 
         // Get days between start and end times
         double seconds = std::difftime(global_maxs.latest_epoch, global_mins.earliest_epoch);
@@ -491,7 +496,7 @@ int main(int argc, char* argv[]) {
         print_map_top_n(global_endpoint_counts, 5);
         std::cout << "Top 5 IPs:" << std::endl;
         print_map_top_n(global_ip_counts, 5);
-        std::cout << "Top 5 Referers:" << std::endl;
+        std::cout << "Top 5 Referrers:" << std::endl;
         print_map_top_n(global_referrer_counts, 5);
 
         // Get top 5 status codes
@@ -570,30 +575,67 @@ int main(int argc, char* argv[]) {
 
     // =============================================================
     // PART 4: Get timing stats and print to console
-    // - Get total time and max communication time
+    // - Get total rank 0 time
+    // - Get min, max, and average times for file I/O, processing, 
+    //   communication, and results across all ranks
     // =============================================================
 
     // Gather timing stats from all ranks
-    double max_communication_time, max_processing_time, max_results_time, max_file_io_time;
+    double max_communication_time, min_communication_time, avg_communication_time;
     MPI_Reduce(&time_communication, &max_communication_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&time_processing, &max_processing_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&time_results, &max_results_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
-    MPI_Reduce(&time_file_io, &max_file_io_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_communication, &min_communication_time, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_communication, &avg_communication_time, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    if (rank == 0) {
+        avg_communication_time /= size;
+    }
 
+    double max_processing_time, min_processing_time, avg_processing_time;
+    MPI_Reduce(&time_processing, &max_processing_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_processing, &min_processing_time, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_processing, &avg_processing_time, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    if (rank == 0) {
+        avg_processing_time /= size;
+    }
+
+    double max_results_time, min_results_time, avg_results_time;
+    MPI_Reduce(&time_results, &max_results_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_results, &min_results_time, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_results, &avg_results_time, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    if (rank == 0) {
+        avg_results_time /= size;
+    }
+
+    double max_file_io_time, min_file_io_time, avg_file_io_time;
+    MPI_Reduce(&time_file_io, &max_file_io_time, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_file_io, &min_file_io_time, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+    MPI_Reduce(&time_file_io, &avg_file_io_time, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    if (rank == 0) {
+        avg_file_io_time /= size;
+    }
+
+    // Print timing stats at rank 0
     if (rank == 0) {
         std::cout << "\n=========== TIMING ===========" << std::endl;
 
-        std::cout << "\nTotal Time: " << time_total << " seconds" << std::endl;
+        std::cout << "\nRank 0 Total Time: " << time_total << " seconds" << std::endl;
 
-        std::cout << "\nMax File I/O Time: " << max_file_io_time << " seconds" << std::endl;
-        std::cout << "Max Processing Time: " << max_processing_time << " seconds" << std::endl;
-        std::cout << "Max Communication Time: " << max_communication_time << " seconds" << std::endl;
-        std::cout << "Max Results Time: " << max_results_time << " seconds" << std::endl;
+        double sum_of_maxes = max_file_io_time + max_processing_time + max_communication_time + max_results_time;
+        std::cout << "Max Times Sum: " << sum_of_maxes << " seconds" << std::endl << std::endl;
 
-        std::cout << "\nFile I/O Percentage: "<< (max_file_io_time / time_total * 100) << "%" << std::endl;
-        std::cout << "Processing Percentage: "<< (max_processing_time / time_total * 100) << "%" << std::endl;
-        std::cout << "Communication Percentage: "<< (max_communication_time / time_total * 100) << "%" << std::endl;
-        std::cout << "Results Percentage: "<< (max_results_time / time_total * 100) << "%" << std::endl;
+        std::cout << std::format("{:<16} {:<14} {:<14} {:<14} {:<14}\n",
+            "Phase", "Min Time (s)", "Avg Time (s)", "Max Time (s)", "% of Max Total");
+        std::cout << std::format("{:<16} {:<14.6f} {:<14.6f} {:<14.6f} {:.2f}%\n",
+            "File I/O", min_file_io_time, avg_file_io_time, max_file_io_time,
+            max_file_io_time / sum_of_maxes * 100);
+        std::cout << std::format("{:<16} {:<14.6f} {:<14.6f} {:<14.6f} {:.2f}%\n",
+            "Processing", min_processing_time, avg_processing_time, max_processing_time,
+            max_processing_time / sum_of_maxes * 100);
+        std::cout << std::format("{:<16} {:<14.6f} {:<14.6f} {:<14.6f} {:.2f}%\n",
+            "Communication", min_communication_time, avg_communication_time, max_communication_time,
+            max_communication_time / sum_of_maxes * 100);
+        std::cout << std::format("{:<16} {:<14.6f} {:<14.6f} {:<14.6f} {:.2f}%\n",
+            "Results", min_results_time, avg_results_time, max_results_time,
+            max_results_time / sum_of_maxes * 100);
     }
 
     MPI_File_close(&fh);
@@ -602,6 +644,6 @@ int main(int argc, char* argv[]) {
 }
 
 /**
-mpic++ -std=c++17 -o log_processor.bin log_processor.cpp
+mpic++ -std=c++20 -o log_processor.bin log_processor.cpp
 mpirun -np 8 ./log_processor.bin
 */
