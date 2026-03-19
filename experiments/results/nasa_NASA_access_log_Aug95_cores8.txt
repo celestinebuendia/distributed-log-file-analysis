@@ -1,0 +1,67 @@
+=========== LOG FILE ANALYTICS ===========
+1995-08-01 01:00:01 to 1995-09-01 00:59:53
+
+--- Overall Totals ---
+Total Requests: 1569898
+Total Bytes Sent: 26828654919
+Total Unique Endpoints: 15351
+Total Unique IPs: 75060
+
+--- Top Categories ---
+Top 5 Endpoints:
+  /images/NASA-logosmall.gif: 97410
+  /images/KSC-logosmall.gif: 75337
+  /images/MOSAIC-logosmall.gif: 67448
+  /images/USA-logosmall.gif: 67068
+  /images/WORLD-logosmall.gif: 66444
+Top 5 IPs:
+  edams.ksc.nasa.gov: 6530
+  piweba4y.prodigy.com: 4846
+  163.206.89.4: 4791
+  piweba5y.prodigy.com: 4607
+  piweba3y.prodigy.com: 4416
+Top 5 Referrers:
+Top 5 Status Codes:
+  200: 1398987
+  304: 134146
+  404: 10039
+  403: 171
+  400: 10
+Top 5 Methods:
+  GET: 1565812
+  OTHER: 3975
+  POST: 111
+  PUT: 0
+  DELETE: 0
+
+--- Averages ---
+Response Time / Request: N/A
+Bytes / Request: 17089.4
+Requests / Day: 50642
+Unique IPs / Day: 2421.3
+Requests / IP: 20
+
+--- Request Percentages ---
+Status Codes:
+  2XX: 89.1132%
+  3XX: 10.2327%
+  4XX: 0.650998%
+  5XX: 0.00191095%
+Methods:
+  GET: 99.7397%
+  POST: 0.00707052%
+  PUT: 0%
+  DELETE: 0%
+  PATCH: 0%
+  OTHER: 0.253201%
+
+=========== TIMING ===========
+
+Rank 0 Total Time: 13.7537 seconds
+Max Times Sum: 14.2041 seconds
+
+Phase            Min Time (s)   Avg Time (s)   Max Time (s)   % of Max Total
+File I/O         0.368628       0.430708       0.493416       3.47%
+Processing       12.183060      12.381453      12.554518      88.39%
+Communication    0.112454       0.223737       0.438367       3.09%
+Results          0.000000       0.089726       0.717804       5.05%

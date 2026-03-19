@@ -1,0 +1,67 @@
+=========== LOG FILE ANALYTICS ===========
+1969-12-31 15:59:59 to 1995-07-28 14:32:25
+
+--- Overall Totals ---
+Total Requests: 1891715
+Total Bytes Sent: 38696164250
+Total Unique Endpoints: 21214
+Total Unique IPs: 81983
+
+--- Top Categories ---
+Top 5 Endpoints:
+  /images/NASA-logosmall.gif: 111388
+  /images/KSC-logosmall.gif: 89639
+  /images/MOSAIC-logosmall.gif: 60468
+  /images/USA-logosmall.gif: 60014
+  /images/WORLD-logosmall.gif: 59489
+Top 5 IPs:
+  piweba3y.prodigy.com: 17572
+  piweba4y.prodigy.com: 11591
+  piweba1y.prodigy.com: 9868
+  alyssa.prodigy.com: 7852
+  siltb10.orl.mmc.com: 7573
+Top 5 Referrers:
+Top 5 Status Codes:
+  200: 1701535
+  304: 132627
+  404: 10832
+  500: 62
+  403: 53
+Top 5 Methods:
+  GET: 1887646
+  OTHER: 3958
+  POST: 111
+  PUT: 0
+  DELETE: 0
+
+--- Averages ---
+Response Time / Request: N/A
+Bytes / Request: 20455.6
+Requests / Day: 202.541
+Unique IPs / Day: 8.77772
+Requests / IP: 23
+
+--- Request Percentages ---
+Status Codes:
+  2XX: 89.9467%
+  3XX: 9.47289%
+  4XX: 0.575668%
+  5XX: 0.00401752%
+Methods:
+  GET: 99.7849%
+  POST: 0.00586769%
+  PUT: 0%
+  DELETE: 0%
+  PATCH: 0%
+  OTHER: 0.209228%
+
+=========== TIMING ===========
+
+Rank 0 Total Time: 70.7682 seconds
+Max Times Sum: 71.1711 seconds
+
+Phase            Min Time (s)   Avg Time (s)   Max Time (s)   % of Max Total
+File I/O         0.727614       0.750393       0.772517       1.09%
+Processing       68.905061      69.159127      69.271236      97.33%
+Communication    0.110474       0.237970       0.506804       0.71%
+Results          0.000000       0.155127       0.620508       0.87%

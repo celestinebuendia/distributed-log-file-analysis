@@ -40,3 +40,11 @@
 
 # debug information files
 *.dwo
+
+# VS Code settings
+.vscode/*
+
+# Large files
+test-files/generated/*.log
+test-files/nasa/*
+test-files/zanbil/*
