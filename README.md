@@ -32,3 +32,11 @@ Two month log files (July and August 1995) of HTTP requests to the NASA Kennedy 
 One month log file (January 2019) of HTTP requests to the Iranian web store Zanbil (10,365,152 lines).
 
 **Source:** https://www.kaggle.com/datasets/eliasdabbas/web-server-access-logs
+
+## Run All Tests
+
+Run in the base directory:
+```bash
+chmod +x experiments/run-experiments.sh
+./experiments/run-experiments.sh
+```

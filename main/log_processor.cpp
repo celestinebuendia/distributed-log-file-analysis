@@ -134,7 +134,7 @@ void process_log_line(
     // Update individual status code counts
     switch (status_code) {
         case 200: local_sums.status_200++; break;
-        case 303: local_sums.status_301++; break;
+        case 301: local_sums.status_301++; break;
         case 304: local_sums.status_304++; break;
         case 400: local_sums.status_400++; break;
         case 401: local_sums.status_401++; break;
@@ -157,9 +157,11 @@ void process_log_line(
     }
 
     // Parse bytes sent
-    long bytes;
-    iss >> bytes;
-    local_sums.total_bytes_sent += bytes;
+    std::string bytes_str;
+    iss >> bytes_str;
+    if (!bytes_str.empty() && bytes_str != "-") {
+        local_sums.total_bytes_sent += std::stol(bytes_str);
+    }
 
     // Increment total requests
     local_sums.total_requests++;
@@ -174,22 +176,24 @@ void process_log_line(
         return;
     }
 
+    std::istringstream rest(remaining);
+
     // Parse referrer
     std::string referrer;
-    std::getline(iss, referrer, '"');
-    std::getline(iss, referrer, '"');
+    std::getline(rest, referrer, '"');
+    std::getline(rest, referrer, '"');
     if (!referrer.empty() && referrer != "-") {
         local_referrer_counts[referrer]++;
     }
 
     // Parse user agent (currently not handled)
     std::string user_agent;
-    std::getline(iss, user_agent, '"');
-    std::getline(iss, user_agent, '"');
+    std::getline(rest, user_agent, '"');
+    std::getline(rest, user_agent, '"');
 
     // Parse response time
     long response_time;
-    if (!iss >> response_time) {
+    if (!(rest >> response_time)) {
         // Not present, set to 0 and continue
         response_time = 0;
     } else {
@@ -645,5 +649,5 @@ int main(int argc, char* argv[]) {
 
 /**
 mpic++ -std=c++20 -o log_processor.bin log_processor.cpp
-mpirun -np 8 ./log_processor.bin
+mpirun -np <number_of_ranks> ./log_processor.bin <path_to_log_file>
 */
