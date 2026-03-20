@@ -1,0 +1,72 @@
+=========== LOG FILE ANALYTICS ===========
+2019-01-22 03:56:14 to 2019-01-26 20:29:13
+
+--- Overall Totals ---
+Total Requests: 10365152
+Total Bytes Sent: 128871072806
+Total Unique Endpoints: 893065
+Total Unique IPs: 258606
+
+--- Top Categories ---
+Top 5 Endpoints:
+  /settings/logo: 352047
+  /static/css/font/wyekan/font.woff: 280176
+  /static/images/guarantees/bestPrice.png: 138010
+  /static/images/guarantees/fastDelivery.png: 125689
+  /static/images/guarantees/warranty.png: 124127
+Top 5 IPs:
+  66.249.66.194: 353483
+  66.249.66.91: 314522
+  151.239.241.163: 92475
+  66.249.66.92: 88332
+  91.99.30.32: 45979
+Top 5 Referrers:
+  https://www.zanbil.ir/: 494757
+  https://znbl.ir/static/bundle-bundle_site_head.css: 387201
+  https://www.zanbil.ir/browse/home-appliances/%D9%84%D9%88%D8%A7%D8%B2%D9%85-%D8%AE%D8%A7%D9%86%DA%AF%DB%8C: 219555
+  https://www.zanbil.ir/m: 128879
+  https://www.google.com/: 98420
+Top 5 Status Codes:
+  200: 9579825
+  304: 340228
+  404: 105011
+  301: 67553
+  500: 14266
+Top 5 Methods:
+  GET: 10190005
+  POST: 139155
+  OTHER: 35992
+  PUT: 0
+  DELETE: 0
+
+--- Averages ---
+Response Time / Request: N/A
+Bytes / Request: 12433.1
+Requests / Day: 2.21026e+06
+Unique IPs / Day: 55144.9
+Requests / IP: 40
+
+--- Request Percentages ---
+Status Codes:
+  2XX: 92.4234%
+  3XX: 5.8621%
+  4XX: 1.56815%
+  5XX: 0.146327%
+Methods:
+  GET: 98.3102%
+  POST: 1.34253%
+  PUT: 0%
+  DELETE: 0%
+  PATCH: 0%
+  OTHER: 0.34724%
+
+=========== TIMING ===========
+
+Rank 0 Total Time: 223.67 seconds
+Max Times Sum: 232.844 seconds
+
+Phase            Min Time (s)   Avg Time (s)   Max Time (s)   % of Max Total
+File I/O         15.617622      18.728351      24.242883      10.41%
+Processing       163.393296     166.204676     168.104246     72.20%
+Communication    5.780696       8.482558       10.244105      4.40%
+Results          0.000000       7.563193       30.252771      12.99%

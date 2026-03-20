@@ -57,11 +57,11 @@ Methods:
 
 =========== TIMING ===========
 
-Rank 0 Total Time: 22.5702 seconds
-Max Times Sum: 23.3229 seconds
+Rank 0 Total Time: 13.8441 seconds
+Max Times Sum: 14.0157 seconds
 
 Phase            Min Time (s)   Avg Time (s)   Max Time (s)   % of Max Total
-File I/O         0.635395       0.785133       0.898689       3.85%
-Processing       19.957758      20.250679      20.581140      88.24%
-Communication    0.215926       0.576318       0.885379       3.80%
-Results          0.000000       0.119716       0.957728       4.11%
+File I/O         0.417262       0.448972       0.466646       3.33%
+Processing       12.473049      12.548892      12.618322      90.03%
+Communication    0.083773       0.151427       0.236107       1.68%
+Results          0.000000       0.086825       0.694600       4.96%

@@ -1,0 +1,72 @@
+=========== LOG FILE ANALYTICS ===========
+2025-01-01 01:18:44 to 2025-12-31 12:59:40
+
+--- Overall Totals ---
+Total Requests: 1000000
+Total Bytes Sent: 4999528825
+Total Unique Endpoints: 8
+Total Unique IPs: 5000
+
+--- Top Categories ---
+Top 5 Endpoints:
+  /catalog/search: 299683
+  /catalog: 249858
+  /usr/login: 150385
+  /help: 119691
+  /usr/register: 100195
+Top 5 IPs:
+  160.190.21.62: 1287
+  189.118.11.146: 1284
+  217.120.47.161: 1284
+  77.182.91.62: 1283
+  164.65.171.56: 1279
+Top 5 Referrers:
+  https://smith.com/mainauthor.html: 5
+  http://johnson.com/tagshome.html: 5
+  http://www.williams.com/explorehomepage.php: 4
+  https://www.jones.com/mainterms.html: 4
+  http://garcia.com/searchregister.html: 4
+Top 5 Status Codes:
+  200: 800640
+  404: 99183
+  500: 20034
+  403: 10158
+  304: 10106
+Top 5 Methods:
+  GET: 699370
+  POST: 200503
+  PUT: 69845
+  DELETE: 30282
+  PATCH: 0
+
+--- Averages ---
+Response Time / Request: 2499.38
+Bytes / Request: 4999.53
+Requests / Day: 2743.58
+Unique IPs / Day: 13.7179
+Requests / IP: 200
+
+--- Request Percentages ---
+Status Codes:
+  2XX: 80.064%
+  3XX: 5.9966%
+  4XX: 10.9341%
+  5XX: 3.0053%
+Methods:
+  GET: 69.937%
+  POST: 20.0503%
+  PUT: 6.9845%
+  DELETE: 3.0282%
+  PATCH: 0%
+  OTHER: 0%
+
+=========== TIMING ===========
+
+Rank 0 Total Time: 50.9753 seconds
+Max Times Sum: 50.9753 seconds
+
+Phase            Min Time (s)   Avg Time (s)   Max Time (s)   % of Max Total
+File I/O         2.584706       2.584706       2.584706       5.07%
+Processing       46.436253      46.436253      46.436253      91.10%
+Communication    0.433312       0.433312       0.433312       0.85%
+Results          1.521051       1.521051       1.521051       2.98%

@@ -1,0 +1,72 @@
+=========== LOG FILE ANALYTICS ===========
+2025-01-01 01:02:58 to 2025-12-31 12:58:13
+
+--- Overall Totals ---
+Total Requests: 5000000
+Total Bytes Sent: 24997596263
+Total Unique Endpoints: 8
+Total Unique IPs: 5000
+
+--- Top Categories ---
+Top 5 Endpoints:
+  /catalog/search: 1499357
+  /catalog: 1251178
+  /usr/login: 750325
+  /help: 599490
+  /usr/register: 499859
+Top 5 IPs:
+  174.98.109.33: 6231
+  170.220.8.1: 6224
+  195.89.84.104: 6221
+  58.127.127.252: 6214
+  29.24.117.231: 6190
+Top 5 Referrers:
+  http://smith.com/categorylogin.html: 11
+  http://www.smith.com/categorypost.html: 11
+  http://smith.com/postslogin.html: 10
+  http://www.smith.com/searchhome.html: 10
+  https://smith.com/postsindex.html: 10
+Top 5 Status Codes:
+  200: 4000074
+  404: 499827
+  500: 100183
+  502: 50333
+  403: 49807
+Top 5 Methods:
+  GET: 3499340
+  POST: 1000950
+  PUT: 349776
+  DELETE: 149934
+  PATCH: 0
+
+--- Averages ---
+Response Time / Request: 2500.31
+Bytes / Request: 4999.52
+Requests / Day: 13717.5
+Unique IPs / Day: 13.7175
+Requests / IP: 1000
+
+--- Request Percentages ---
+Status Codes:
+  2XX: 80.0015%
+  3XX: 5.99552%
+  4XX: 10.9927%
+  5XX: 3.01032%
+Methods:
+  GET: 69.9868%
+  POST: 20.019%
+  PUT: 6.99552%
+  DELETE: 2.99868%
+  PATCH: 0%
+  OTHER: 0%
+
+=========== TIMING ===========
+
+Rank 0 Total Time: 77.9023 seconds
+Max Times Sum: 78.9268 seconds
+
+Phase            Min Time (s)   Avg Time (s)   Max Time (s)   % of Max Total
+File I/O         2.521738       2.722340       2.841538       3.60%
+Processing       51.623134      51.912227      52.517216      66.54%
+Communication    2.185949       2.794558       3.112243       3.94%
+Results          0.000000       2.556981       20.455846      25.92%

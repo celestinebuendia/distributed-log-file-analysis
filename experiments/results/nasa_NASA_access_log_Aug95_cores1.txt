@@ -3,7 +3,7 @@
 
 --- Overall Totals ---
 Total Requests: 1569898
-Total Bytes Sent: 26828690035
+Total Bytes Sent: 26828334390
 Total Unique Endpoints: 15351
 Total Unique IPs: 75060
 
@@ -36,7 +36,7 @@ Top 5 Methods:
 
 --- Averages ---
 Response Time / Request: N/A
-Bytes / Request: 17089.4
+Bytes / Request: 17089.2
 Requests / Day: 50642
 Unique IPs / Day: 2421.3
 Requests / IP: 20
@@ -57,11 +57,11 @@ Methods:
 
 =========== TIMING ===========
 
-Rank 0 Total Time: 57.3495 seconds
-Max Times Sum: 57.3493 seconds
+Rank 0 Total Time: 54.6495 seconds
+Max Times Sum: 54.6495 seconds
 
 Phase            Min Time (s)   Avg Time (s)   Max Time (s)   % of Max Total
-File I/O         1.573218       1.573218       1.573218       2.74%
-Processing       55.541234      55.541234      55.541234      96.85%
-Communication    0.058208       0.058208       0.058208       0.10%
-Results          0.176685       0.176685       0.176685       0.31%
+File I/O         2.072233       2.072233       2.072233       3.79%
+Processing       52.291497      52.291497      52.291497      95.69%
+Communication    0.059026       0.059026       0.059026       0.11%
+Results          0.226740       0.226740       0.226740       0.41%

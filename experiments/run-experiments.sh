@@ -4,7 +4,6 @@ GENERATOR="test-files/generated/TestFileGenerator.py"
 PROCESSOR="main/log_processor.bin"
 OUTPUT_DIR="test-files/generated"
 RESULTS_DIR="experiments/results"
-N_CORES=8
 
 mkdir -p $OUTPUT_DIR $RESULTS_DIR
 
@@ -21,6 +20,11 @@ echo "Running processor on generated files..."
 for file in $OUTPUT_DIR/test_log_1M.log $OUTPUT_DIR/test_log_3M.log $OUTPUT_DIR/test_log_5M.log $OUTPUT_DIR/test_log_10M.log; do
     name=$(basename $file .log)
     for cores in 1 2 4 8; do
+        # Skip 1-core run for 10M file
+        if [[ $name == *"10M"* && $cores -eq 1 ]]; then
+            echo "  Skipping $name with $cores cores (too large)"
+            continue
+        fi
         echo "  Processing $name with $cores cores..."
         mpirun -np $cores $PROCESSOR $file > $RESULTS_DIR/${name}_cores${cores}.txt
     done
@@ -37,6 +41,11 @@ for file in "${BENCHMARK_FILES[@]}"; do
     name=${file#test-files/}
     name=${name//\//_}
     for cores in 1 2 4 8; do
+        # Skip 1-core run for Zanbil file
+        if [[ $file == *"zanbil"* && $cores -eq 1 ]]; then
+            echo "  Skipping $name with $cores cores (too large)"
+            continue
+        fi
         echo "  Processing $name with $cores cores..."
         mpirun -np $cores $PROCESSOR $file > $RESULTS_DIR/${name}_cores${cores}.txt
     done
